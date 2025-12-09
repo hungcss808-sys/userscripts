@@ -9,12 +9,12 @@
 	export let request = false;
 </script>
 
+<!-- svelte-ignore a11y-interactive-supports-focus -->
 <div
 	class="item {enabled ? 'enabled' : 'disabled'} {background ?? ''}"
 	on:click
 	on:keypress
 	role="button"
-	tabindex="0"
 >
 	<span></span>
 	<div class="truncate">{name}</div>
