@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix: # https://docs.github.com/en/actions/using-jobs/using-a-matrix-for-your-jobs
         platform: [mac, ios]
-    runs-on: macos-latest # https://github.com/actions/runner-images
+    runs-on: macos-14 # https://github.com/actions/runner-images
     steps:
       - uses: actions/checkout@v4 # https://github.com/actions/checkout
         with:
