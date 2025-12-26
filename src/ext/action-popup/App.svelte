@@ -347,15 +347,18 @@
 		disabled = false;
 	}
 
-	async function abortUpdates() {
-		// sends message to swift side canceling all URLSession tasks
-		sendNativeMessage({ name: "CANCEL_REQUESTS" });
-		// timestamp for checking updates happens right before update fetching
-		// that means when this function runs the timestamp has already been saved
-		// reloading the window will essentially skip the update check
-		// since the subsequent popup load will not check for updates
-		window.location.reload();
-	}
+	/**
+	 * Not working due to: https://github.com/quoid/userscripts/issues/276#issuecomment-3507547737
+	 */
+	// async function abortUpdates() {
+	// 	// sends message to swift side canceling all URLSession tasks
+	// 	sendNativeMessage({ name: "CANCEL_REQUESTS" });
+	// 	// timestamp for checking updates happens right before update fetching
+	// 	// that means when this function runs the timestamp has already been saved
+	// 	// reloading the window will essentially skip the update check
+	// 	// since the subsequent popup load will not check for updates
+	// 	window.location.reload();
+	// }
 
 	/** @type {import("svelte/elements").UIEventHandler<Window>} */
 	// async function resizeHandler(event) {
@@ -476,7 +479,6 @@
 		loading={disabled}
 		closeClick={() => (showUpdates = false)}
 		showLoaderOnDisabled={true}
-		abortClick={abortUpdates}
 		abort={showUpdates}
 	>
 		<UpdateView
@@ -568,7 +570,7 @@
 	</div>
 	<div class="main {rowColors || ''}" bind:this={main}>
 		{#if loading}
-			<Loader abortClick={abortUpdates} {abort} />
+			<Loader {abort} />
 		{:else if inactive}
 			<div class="none">Popup inactive on extension page</div>
 		{:else if firstGuide}
