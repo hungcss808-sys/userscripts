@@ -3,7 +3,6 @@
 	import iconLoader from "../../shared/img/icon-loader.svg?raw";
 
 	export let abort = false;
-	export let abortClick = () => {};
 	export let backgroundColor = "var(--color-bg-secondary)";
 
 	/**
@@ -27,11 +26,7 @@
 	<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 	{@html iconLoader}
 	{#if abort}
-		<div>
-			Fetching resources, <button class="link" on:click={abortClick}>
-				cancel request
-			</button>
-		</div>
+		<div>Fetching resources, please wait... (timeout after 30s)</div>
 	{/if}
 </div>
 

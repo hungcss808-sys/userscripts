@@ -9,7 +9,6 @@
 	export let closeClick;
 	export let showLoaderOnDisabled = true;
 	export let abort = false;
-	export let abortClick = () => {};
 
 	function slide(node, params) {
 		return {
@@ -28,7 +27,7 @@
 	</div>
 	<div class="view__body">
 		{#if loading && showLoaderOnDisabled}
-			<Loader backgroundColor="var(--color-bg-primary)" {abortClick} {abort} />
+			<Loader backgroundColor="var(--color-bg-primary)" {abort} />
 		{:else}
 			<slot><div>Slot content is required...</div></slot>
 		{/if}

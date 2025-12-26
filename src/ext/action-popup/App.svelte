@@ -146,54 +146,54 @@
 		initialize();
 	}
 
-	async function shouldCheckForUpdates() {
-		// if there's no network connectivity, do not check for updates
-		if (!window || !window.navigator || !window.navigator.onLine) {
-			console.info("user is offline, not running update check");
-			return false;
-		}
-		// when an update check is run, a timestamp is saved to extension storage
-		// only check for updates every n milliseconds to avoid delaying popup load regularly
-		const checkInterval = 24 * 60 * 60 * 1000; // 24hr, 86400000
-		const timestampMs = Date.now();
-		let lastUpdateCheck = 0;
-		// check extension storage for saved key/val
-		// if there's an issue getting extension storage, skip the check
-		let lastUpdateCheckObj;
-		try {
-			lastUpdateCheckObj = await browser.storage.local.get(["lastUpdateCheck"]);
-		} catch (error) {
-			console.error(`Error checking extension storage ${error}`);
-			return false;
-		}
-		// if extension storage doesn't have key, run the check
-		// key/val will be saved after the update check runs
-		if (Object.keys(lastUpdateCheckObj).length === 0) {
-			console.info("no last check saved, running update check");
-			return true;
-		}
-		// if the val is not a number, something went wrong, check anyway
-		// when update re-runs, new val of the proper type will be saved
-		if (!Number.isFinite(lastUpdateCheckObj.lastUpdateCheck)) {
-			console.info("run check saved with wrong type, running update check");
-			return true;
-		}
-		// at this point it is known that key exists and value is a number
-		// update local var with the val saved to extension storage
-		lastUpdateCheck = lastUpdateCheckObj.lastUpdateCheck;
-		// if less than n milliseconds have passed, don't check
-		if (timestampMs - lastUpdateCheck < checkInterval) {
-			console.info("not enough time has passed, not running update check");
-			return false;
-		}
+	// async function shouldCheckForUpdates() {
+	// 	// if there's no network connectivity, do not check for updates
+	// 	if (!window || !window.navigator || !window.navigator.onLine) {
+	// 		console.info("user is offline, not running update check");
+	// 		return false;
+	// 	}
+	// 	// when an update check is run, a timestamp is saved to extension storage
+	// 	// only check for updates every n milliseconds to avoid delaying popup load regularly
+	// 	const checkInterval = 24 * 60 * 60 * 1000; // 24hr, 86400000
+	// 	const timestampMs = Date.now();
+	// 	let lastUpdateCheck = 0;
+	// 	// check extension storage for saved key/val
+	// 	// if there's an issue getting extension storage, skip the check
+	// 	let lastUpdateCheckObj;
+	// 	try {
+	// 		lastUpdateCheckObj = await browser.storage.local.get(["lastUpdateCheck"]);
+	// 	} catch (error) {
+	// 		console.error(`Error checking extension storage ${error}`);
+	// 		return false;
+	// 	}
+	// 	// if extension storage doesn't have key, run the check
+	// 	// key/val will be saved after the update check runs
+	// 	if (Object.keys(lastUpdateCheckObj).length === 0) {
+	// 		console.info("no last check saved, running update check");
+	// 		return true;
+	// 	}
+	// 	// if the val is not a number, something went wrong, check anyway
+	// 	// when update re-runs, new val of the proper type will be saved
+	// 	if (!Number.isFinite(lastUpdateCheckObj.lastUpdateCheck)) {
+	// 		console.info("run check saved with wrong type, running update check");
+	// 		return true;
+	// 	}
+	// 	// at this point it is known that key exists and value is a number
+	// 	// update local var with the val saved to extension storage
+	// 	lastUpdateCheck = lastUpdateCheckObj.lastUpdateCheck;
+	// 	// if less than n milliseconds have passed, don't check
+	// 	if (timestampMs - lastUpdateCheck < checkInterval) {
+	// 		console.info("not enough time has passed, not running update check");
+	// 		return false;
+	// 	}
 
-		console.info(
-			`${(timestampMs - lastUpdateCheck) / (1000 * 60 * 60)} hours have passed`,
-		);
-		console.info("running update check");
-		// otherwise run the check
-		return true;
-	}
+	// 	console.info(
+	// 		`${(timestampMs - lastUpdateCheck) / (1000 * 60 * 60)} hours have passed`,
+	// 	);
+	// 	console.info("running update check");
+	// 	// otherwise run the check
+	// 	return true;
+	// }
 
 	async function openSaveLocation() {
 		disabled = true;
@@ -302,33 +302,36 @@
 		}
 		items = matches.matches;
 
-		// get updates
-		const checkUpdates = await shouldCheckForUpdates();
-		if (checkUpdates) {
-			let updatesResponse;
-			try {
-				// save timestamp in ms to extension storage
-				const timestampMs = Date.now();
-				await browser.storage.local.set({ lastUpdateCheck: timestampMs });
-				abort = true;
-				updatesResponse = await sendNativeMessage({ name: "POPUP_UPDATES" });
-			} catch (error) {
-				console.error(`Error for updates promise: ${error}`);
-				initError = true;
-				loading = false;
-				abort = false;
-				return;
-			}
-			if (updatesResponse.error) {
-				errorNotification = updatesResponse.error;
-				loading = false;
-				disabled = false;
-				abort = false;
-				return;
-			}
-			updates = updatesResponse.updates;
-			abort = false;
-		}
+		/**
+		 * get updates
+		 * disabled due to - https://github.com/quoid/userscripts/issues/894
+		 */
+		// const checkUpdates = await shouldCheckForUpdates();
+		// if (checkUpdates) {
+		// 	let updatesResponse;
+		// 	try {
+		// 		// save timestamp in ms to extension storage
+		// 		const timestampMs = Date.now();
+		// 		await browser.storage.local.set({ lastUpdateCheck: timestampMs });
+		// 		abort = true;
+		// 		updatesResponse = await sendNativeMessage({ name: "POPUP_UPDATES" });
+		// 	} catch (error) {
+		// 		console.error(`Error for updates promise: ${error}`);
+		// 		initError = true;
+		// 		loading = false;
+		// 		abort = false;
+		// 		return;
+		// 	}
+		// 	if (updatesResponse.error) {
+		// 		errorNotification = updatesResponse.error;
+		// 		loading = false;
+		// 		disabled = false;
+		// 		abort = false;
+		// 		return;
+		// 	}
+		// 	updates = updatesResponse.updates;
+		// 	abort = false;
+		// }
 
 		// check if current page url is a userscript
 		if (strippedUrl.endsWith(".user.js")) {
@@ -344,15 +347,18 @@
 		disabled = false;
 	}
 
-	async function abortUpdates() {
-		// sends message to swift side canceling all URLSession tasks
-		sendNativeMessage({ name: "CANCEL_REQUESTS" });
-		// timestamp for checking updates happens right before update fetching
-		// that means when this function runs the timestamp has already been saved
-		// reloading the window will essentially skip the update check
-		// since the subsequent popup load will not check for updates
-		window.location.reload();
-	}
+	/**
+	 * Not working due to: https://github.com/quoid/userscripts/issues/276#issuecomment-3507547737
+	 */
+	// async function abortUpdates() {
+	// 	// sends message to swift side canceling all URLSession tasks
+	// 	sendNativeMessage({ name: "CANCEL_REQUESTS" });
+	// 	// timestamp for checking updates happens right before update fetching
+	// 	// that means when this function runs the timestamp has already been saved
+	// 	// reloading the window will essentially skip the update check
+	// 	// since the subsequent popup load will not check for updates
+	// 	window.location.reload();
+	// }
 
 	/** @type {import("svelte/elements").UIEventHandler<Window>} */
 	// async function resizeHandler(event) {
@@ -473,7 +479,6 @@
 		loading={disabled}
 		closeClick={() => (showUpdates = false)}
 		showLoaderOnDisabled={true}
-		abortClick={abortUpdates}
 		abort={showUpdates}
 	>
 		<UpdateView
@@ -565,7 +570,7 @@
 	</div>
 	<div class="main {rowColors || ''}" bind:this={main}>
 		{#if loading}
-			<Loader abortClick={abortUpdates} {abort} />
+			<Loader {abort} />
 		{:else if inactive}
 			<div class="none">Popup inactive on extension page</div>
 		{:else if firstGuide}
