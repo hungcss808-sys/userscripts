@@ -1,8 +1,8 @@
 #include "Userscripts-Base.xcconfig"
 
-INFOPLIST_KEY_NSHumanReadableCopyright = Copyright © 2018–2025 Justin Wasack. All rights reserved.
-IOS_APP_VERSION = 1.8.4
-MAC_APP_VERSION = 4.8.4
+INFOPLIST_KEY_NSHumanReadableCopyright = Copyright © 2018–2026 Justin Wasack. All rights reserved.
+IOS_APP_VERSION = 1.8.5
+MAC_APP_VERSION = 4.8.5
 
 // Distribution
 CODE_SIGN_STYLE = Manual
